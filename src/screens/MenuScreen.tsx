@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import {
   Platform,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from 'expo-router';
 import { useTranslation } from 'react-i18next';

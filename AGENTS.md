@@ -1,6 +1,6 @@
 # Expo HAS CHANGED
 
-Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before writing any code.
+Read the exact versioned docs at https://docs.expo.dev/versions/v58.0.0/ before writing any code.
 
 Actúa como un Senior React Native Architect. Estamos desarrollando "Mind Flip", un juego de memoria bajo una arquitectura limpia (Clean Architecture).
 

@@ -3,6 +3,7 @@ import * as ExpoSplash from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppStoreProvider } from '@/store/useAppStore';
 import { SplashScreen } from '@/components/SplashScreen';
 import { loadSavedLanguage } from '../i18n';
@@ -30,6 +31,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
       <AppStoreProvider>
         <StatusBar style="light" />
         <Stack screenOptions={{ headerShown: false }}>
@@ -48,6 +50,7 @@ export default function RootLayout() {
           />
         )}
       </AppStoreProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
