@@ -1,56 +1,103 @@
-# Welcome to your Expo app 👋
+# Mind Flip 🃏
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Juego de memoria desarrollado en Chile con React Native + Expo SDK 56.
 
-## Get started
+Encuentra todos los pares de cartas antes de que se acabe el tiempo, los movimientos, o simplemente a tu ritmo.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Modos de juego
 
-2. Start the app
+| Modo | Descripción |
+|---|---|
+| 🎯 Clásico | Sin límites. Juega a tu ritmo |
+| ⏱ Contrareloj | Descubre todos los pares antes de que el tiempo se agote |
+| 🃏 Movimientos | Número fijo de intentos. Cada par de cartas volteadas = 1 movimiento |
 
-   ```bash
-   npx expo start
-   ```
+## Tableros
 
-In the output, you'll find options to open the app in a
+`4×4` · `6×4` · `6×6`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Modificadores
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **La Revuelta** — tras 5 fallos consecutivos, las cartas sin descubrir se barajan
+- **Jugar con puntos** — activa el sistema de puntaje y combos
 
-## Get a fresh project
+## Sistema de puntaje
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+Puntaje = Base × Eficiencia × Modo × Revuelta × Combo
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- **Base:** 1.000 / 1.500 / 2.500 según el tablero
+- **Eficiencia:** movimientos mínimos ÷ movimientos usados
+- **Modo:** hasta +50% por tiempo o movimientos restantes
+- **Revuelta:** ×1.3 si estaba activa
+- **Combo:** +10% por cada nivel de combo máximo
 
-### Other setup steps
+El ranking guarda los top 10 por modo y tablero en SQLite local con integridad SHA-256.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+---
 
-## Learn more
+## Stack técnico
 
-To learn more about developing your project with Expo, look at the following resources:
+- **Expo SDK 56** · expo-router v3 · TypeScript estricto
+- **React Native Reanimated v4** — todas las animaciones
+- **expo-sqlite v14** — ranking local (iOS/Android); stub sin dependencias para web
+- **i18next + react-i18next** — ES 🇨🇱 / EN 🇺🇸, detección automática del dispositivo
+- **AsyncStorage** — persistencia de idioma y tema
+- **crypto-js** — firmas SHA-256 para integridad del ranking
+- Arquitectura limpia: `screens/` · `components/` · `hooks/` · `services/` · `utils/`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Estructura
 
-## Join the community
+```
+src/
+├── app/              # Rutas expo-router
+├── components/       # UI puro (Card, GameBoard, Header, ConfettiOverlay…)
+├── screens/          # Pantallas completas (MenuScreen, GameScreen…)
+├── hooks/            # Lógica (useMemoryGame, useCountdown, useTheme)
+├── services/         # Base de datos (dbService.ts / dbService.web.ts)
+├── i18n/             # Traducciones ES + EN
+├── utils/            # Funciones puras (scoreCalculator, gameHelpers)
+├── types/            # Tipos TypeScript globales
+├── config/           # Tema (colores claro/oscuro)
+├── navigation/       # Tipos de rutas
+└── store/            # Estado global (useAppStore)
+```
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Correr el proyecto
+
+```bash
+npm install
+npx expo start
+```
+
+Escanea el QR con la app **Expo Go** o abre en web presionando `w`.
+
+## Build para producción
+
+Requiere cuenta en [expo.dev](https://expo.dev) y EAS CLI instalado (`npm install -g eas-cli`).
+
+```bash
+# Ambas plataformas
+eas build --platform all --profile production
+
+# Solo Android (.aab para Play Store)
+eas build --platform android --profile production
+
+# Solo iOS (.ipa para App Store)
+eas build --platform ios --profile production
+```
+
+---
+
+## Privacidad
+
+Mind Flip no recopila datos personales ni usa publicidad. Los puntajes y apodos se almacenan exclusivamente en el dispositivo del usuario. Más información en la pantalla de **Términos y Privacidad** dentro de la app.
+
+---
+
+Desarrollado por **PurePlay Games** · Chile 🇨🇱
