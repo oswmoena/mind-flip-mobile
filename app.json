@@ -10,8 +10,11 @@
     "ios": {
       "bundleIdentifier": "com.oswallmoena.mindflip",
       "buildNumber": "1",
-      "icon": "./assets/expo.icon",
-      "supportsTablet": false
+      "icon": "./assets/images/icon.png",
+      "supportsTablet": false,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.oswallmoena.mindflip",
