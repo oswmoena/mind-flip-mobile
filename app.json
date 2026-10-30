@@ -8,7 +8,7 @@
     "scheme": "mindflip",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.oswallmoena.mindflip",
+      "bundleIdentifier": "com.pureplaygames.mindflip",
       "buildNumber": "1",
       "icon": "./assets/images/icon.png",
       "supportsTablet": false,
@@ -17,7 +17,7 @@
       }
     },
     "android": {
-      "package": "com.oswallmoena.mindflip",
+      "package": "com.pureplaygames.mindflip",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",

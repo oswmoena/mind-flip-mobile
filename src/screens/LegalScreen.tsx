@@ -14,7 +14,7 @@ import { useTheme } from '@/hooks/useTheme';
 import type { AppTheme } from '@/config/theme';
 
 const DEVELOPER = 'PurePlay Games';
-const EMAIL     = 'o.moena.salgado@gmail.com';
+const EMAIL     = 'oswmoena@gmail.com';
 const APP_NAME  = 'Mind Flip';
 
 export default function LegalScreen() {
