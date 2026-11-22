@@ -1,5 +1,5 @@
 import Head from 'expo-router/head';
-import type { PropsWithChildren } from 'react';
+import { useEffect, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '@/hooks/useTheme';
 import { PortfolioBar } from './PortfolioBar.web';
@@ -14,8 +14,12 @@ const DESCRIPTION =
 
 export function WebShell({ children }: PropsWithChildren) {
   const theme = useTheme();
+  // El HTML estático se genera en tema claro; si el sistema está en oscuro, la hidratación no
+  // corrige el estilo. Aplicar el fondo después de montar fuerza el color correcto del tema.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   return (
-    <View style={[styles.page, { backgroundColor: theme.pageBg }]}>
+    <View style={[styles.page, mounted && { backgroundColor: theme.pageBg }]}>
       <Head>
         <html lang="es" />
         <title>Mind Flip · Juego de memoria</title>
