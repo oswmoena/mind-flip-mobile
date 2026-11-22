@@ -1,0 +1,87 @@
+# Versión web de Mind Flip en https://oswallmoena.cl/apps/mind-flip (no afecta a los builds de EAS).
+# En cada PR: typecheck y export web. En cada push a main (o a mano): además publica con rsync,
+# solo si la variable del repo DEPLOY_ENABLED vale "true".
+# Secretos (mismos valores que en hardware-advisor y portfolio-v4):
+#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY, DEPLOY_KNOWN_HOSTS
+# Los PR desde forks no reciben secretos y la publicación solo corre en main.
+name: Web (portafolio)
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  EXPO_NO_TELEMETRY: "1"
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Export web para /apps/mind-flip
+        run: npm run export:web:portfolio
+
+      - name: Comprobar el export
+        run: |
+          test -f dist/index.html
+          test -f dist/game.html
+          grep -q 'src="/apps/mind-flip/_expo/' dist/index.html
+          grep -q 'Portafolio de Oswall' dist/index.html
+          echo "Tamaño de dist/: $(du -sh dist | cut -f1)"
+
+      # --- Publicación: solo en push a main (o lanzada a mano) y con DEPLOY_ENABLED ---
+
+      - name: Configurar SSH
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$SSH_KEY" ] || [ -z "$KNOWN_HOSTS" ]; then
+            echo "::error::Faltan los secretos DEPLOY_SSH_KEY / DEPLOY_KNOWN_HOSTS"
+            exit 1
+          fi
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Publicar con rsync
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          rsync -az --delete-delay --delay-updates \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            dist/ "$DEPLOY_USER@$DEPLOY_HOST:/var/www/apps/mind-flip/"
+
+      - name: Verificar en producción
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+        run: |
+          base=https://oswallmoena.cl/apps/mind-flip
+          curl -fsS "$base/" | grep -q 'src="/apps/mind-flip/_expo/'
+          curl -fsS -o /dev/null "$base/game"
+          echo "Publicado: $base/"

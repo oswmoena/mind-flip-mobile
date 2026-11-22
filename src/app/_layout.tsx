@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppStoreProvider } from '@/store/useAppStore';
 import { SplashScreen } from '@/components/SplashScreen';
+import { WebShell } from '@/components/WebShell';
 import { loadSavedLanguage } from '../i18n';
 import '../i18n';
 
@@ -34,13 +35,16 @@ export default function RootLayout() {
       <SafeAreaProvider>
       <AppStoreProvider>
         <StatusBar style="light" />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="game"    options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="ranking" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="legal"   options={{ animation: 'slide_from_bottom' }} />
-          <Stack.Screen name="help"    options={{ animation: 'slide_from_bottom' }} />
-        </Stack>
+        {/* En web: barra del portafolio y app centrada; en iOS/Android no cambia nada. */}
+        <WebShell>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="game"    options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="ranking" options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="legal"   options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="help"    options={{ animation: 'slide_from_bottom' }} />
+          </Stack>
+        </WebShell>
 
         {/* JS splash rendered on top — fades out once app is ready */}
         {!splashGone && (
